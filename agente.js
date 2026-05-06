@@ -545,7 +545,7 @@ async function procesarMensaje(texto, esAdmin = true) {
   // ── Intentar Claude Haiku primero ──
   try {
     const resp = await claude.messages.create({
-      model: 'claude-haiku-4-5',
+      model: 'claude-haiku-4-5-20251001',
       max_tokens: 500,
       system: systemFull,
       messages: historial,
@@ -610,19 +610,14 @@ async function ejecutarAccion(rawOriginal) {
     }
 
     if (raw.startsWith('[REPORTE_MES]')) {
-      let datos = await monitor.monitorearVentasDiarias();
-      if (!datos) {
-        console.log('🔄 [REPORTE_MES] intento 2/3...');
-        await new Promise(r => setTimeout(r, 8000));
-        datos = await monitor.monitorearVentasDiarias();
-      }
-      if (!datos) {
-        console.log('🔄 [REPORTE_MES] intento 3/3...');
-        await new Promise(r => setTimeout(r, 10000));
-        datos = await monitor.monitorearVentasDiarias();
-      }
-      if (!datos) return '❌ VectorPOS no respondió. Intenta en unos segundos.';
-      return monitor.generarMensajeMeta(datos);
+  let datos = await monitor.monitorearVentasDiarias();
+  if (!datos) {
+    console.log('🔄 [REPORTE_MES] reintento...');
+    await new Promise(r => setTimeout(r, 4000));
+    datos = await monitor.monitorearVentasDiarias();
+  }
+  if (!datos) return '❌ VectorPOS no respondió. Intenta en unos segundos.';
+  return monitor.generarMensajeMeta(datos);
     }
 
     if (raw.startsWith('[REPORTE_MES_ANT]')) {
