@@ -609,12 +609,11 @@ async function ejecutarAccion(rawOriginal) {
       return await reporteRango(monitor.fechaHoy(), monitor.fechaHoy(), 'HOY');
     }
 
-    if (raw.startsWith('[REPORTE_MES]')) {
-      let datos = await monitor.monitorearVentasDiarias();
-      if (!datos) {
-        console.log('🔄 [REPORTE_MES] intento 2/3...');
-        await new Promise(r => setTimeout(r, 8000));
-        datos = await monitor.monitorearVentasDiarias();
+    if (!datos) {
+  console.log('🔄 [REPORTE_MES] reintento...');
+  await new Promise(r => setTimeout(r, 4000));
+  datos = await monitor.monitorearVentasDiarias();
+}
       }
       if (!datos) {
         console.log('🔄 [REPORTE_MES] intento 3/3...');
